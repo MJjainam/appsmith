@@ -21,7 +21,7 @@ import {
   getCurrentPageId,
   getIsPublishingApplication,
 } from "selectors/editorSelectors";
-import { getCurrentOrgId } from "selectors/organizationSelectors";
+import { getAllUsers, getCurrentOrgId } from "selectors/organizationSelectors";
 import { connect, useDispatch, useSelector } from "react-redux";
 import DeployLinkButtonDialog from "components/designSystems/appsmith/header/DeployLinkButton";
 import { EditInteractionKind, SavingState } from "components/ads/EditableText";
@@ -39,7 +39,7 @@ import { OnboardingStep } from "constants/OnboardingConstants";
 import EndOnboardingTour from "components/editorComponents/Onboarding/EndTour";
 import ProfileDropdown from "pages/common/ProfileDropdown";
 import { getCurrentUser } from "selectors/usersSelectors";
-import { ANONYMOUS_USERNAME } from "constants/userConstants";
+import { ANONYMOUS_USERNAME, User } from "constants/userConstants";
 import Button, { Size } from "components/ads/Button";
 import { IconWrapper } from "components/ads/Icon";
 import { Profile } from "pages/common/ProfileImage";
@@ -59,6 +59,19 @@ import { EditorSaveIndicator } from "./EditorSaveIndicator";
 import getFeatureFlags from "utils/featureFlags";
 import { getIsInOnboarding } from "selectors/onboardingSelectors";
 import { retryPromise } from "utils/AppsmithUtils";
+import Skeleton from "components/utils/Skeleton";
+import TooltipComponent from "components/ads/Tooltip";
+import { Position } from "@blueprintjs/core/lib/esnext/common";
+import {
+  createMessage,
+  DEPLOY_BUTTON_TOOLTIP,
+  LOGO_TOOLTIP,
+  RENAME_APPLICATION_TOOLTIP,
+  SHARE_BUTTON_TOOLTIP,
+  SHARE_BUTTON_TOOLTIP_WITH_USER,
+} from "constants/messages";
+import { fetchUsersForOrg } from "actions/orgActions";
+import { OrgUser } from "constants/orgConstants";
 
 const HeaderWrapper = styled(StyledHeader)`
   width: 100%;
@@ -171,6 +184,8 @@ type EditorHeaderProps = {
   publishApplication: (appId: string) => void;
   lastUpdatedTime?: number;
   inOnboarding: boolean;
+  sharedUserList: OrgUser[];
+  currentUser?: User;
 };
 
 const GlobalSearch = lazy(() => {
@@ -240,46 +255,66 @@ export function EditorHeader(props: EditorHeaderProps) {
     }
   }, [getFeatureFlags().GIT, showGitSyncModal, handlePublish]);
 
+  //Fetch all users for the application to show the share button tooltip
+  useEffect(() => {
+    if (orgId) {
+      dispatch(fetchUsersForOrg(orgId));
+    }
+  }, [orgId]);
+  const filteredSharedUserList = props.sharedUserList.filter(
+    (user) => user.username !== props.currentUser?.username,
+  );
+
   return (
     <ThemeProvider theme={theme}>
       <HeaderWrapper>
         <HeaderSection>
           <Link style={{ height: 24 }} to={APPLICATIONS_URL}>
-            <AppsmithLogoImg
-              alt="Appsmith logo"
-              className="t--appsmith-logo"
-              src={AppsmithLogo}
-            />
+            <TooltipComponent
+              content={createMessage(LOGO_TOOLTIP)}
+              position={Position.BOTTOM_LEFT}
+            >
+              <AppsmithLogoImg
+                alt="Appsmith logo"
+                className="t--appsmith-logo"
+                src={AppsmithLogo}
+              />
+            </TooltipComponent>
           </Link>
           <Boxed step={OnboardingStep.FINISH}>
-            <EditorAppName
-              applicationId={applicationId}
-              className="t--application-name editable-application-name"
-              currentDeployLink={getApplicationViewerPageURL(
-                applicationId,
-                pageId,
-              )}
-              defaultSavingState={
-                isSavingName ? SavingState.STARTED : SavingState.NOT_STARTED
-              }
-              defaultValue={currentApplication?.name || ""}
-              deploy={handleClickDeploy}
-              editInteractionKind={EditInteractionKind.SINGLE}
-              fill
-              isError={isErroredSavingName}
-              isNewApp={
-                applicationList.filter((el) => el.id === applicationId).length >
-                0
-              }
-              isPopoverOpen={isPopoverOpen}
-              onBlur={(value: string) =>
-                updateApplicationDispatch(applicationId || "", {
-                  name: value,
-                  currentApp: true,
-                })
-              }
-              setIsPopoverOpen={setIsPopoverOpen}
-            />
+            <TooltipComponent
+              content={createMessage(RENAME_APPLICATION_TOOLTIP)}
+              position={Position.BOTTOM}
+            >
+              <EditorAppName
+                applicationId={applicationId}
+                className="t--application-name editable-application-name"
+                currentDeployLink={getApplicationViewerPageURL(
+                  applicationId,
+                  pageId,
+                )}
+                defaultSavingState={
+                  isSavingName ? SavingState.STARTED : SavingState.NOT_STARTED
+                }
+                defaultValue={currentApplication?.name || ""}
+                deploy={handleClickDeploy}
+                editInteractionKind={EditInteractionKind.SINGLE}
+                fill
+                isError={isErroredSavingName}
+                isNewApp={
+                  applicationList.filter((el) => el.id === applicationId)
+                    .length > 0
+                }
+                isPopoverOpen={isPopoverOpen}
+                onBlur={(value: string) =>
+                  updateApplicationDispatch(applicationId || "", {
+                    name: value,
+                    currentApp: true,
+                  })
+                }
+                setIsPopoverOpen={setIsPopoverOpen}
+              />
+            </TooltipComponent>
             <ToggleModeButton showSelectedMode={!isPopoverOpen} />
           </Boxed>
         </HeaderSection>
@@ -303,12 +338,25 @@ export function EditorHeader(props: EditorHeaderProps) {
                   : "Share Application"
               }
               trigger={
-                <Button
-                  className="t--application-share-btn header__application-share-btn"
-                  icon={"share"}
-                  size={Size.small}
-                  text={"Share"}
-                />
+                <TooltipComponent
+                  content={
+                    filteredSharedUserList.length
+                      ? createMessage(
+                          SHARE_BUTTON_TOOLTIP_WITH_USER(
+                            filteredSharedUserList.length,
+                          ),
+                        )
+                      : createMessage(SHARE_BUTTON_TOOLTIP)
+                  }
+                  position={Position.BOTTOM}
+                >
+                  <Button
+                    className="t--application-share-btn header__application-share-btn"
+                    icon={"share"}
+                    size={Size.small}
+                    text={"Share"}
+                  />
+                </TooltipComponent>
               }
             />
           </Boxed>
@@ -322,13 +370,18 @@ export function EditorHeader(props: EditorHeaderProps) {
                 step={OnboardingStep.DEPLOY}
                 width={75}
               >
-                <StyledDeployButton
-                  className="t--application-publish-btn"
-                  isLoading={isPublishing}
-                  onClick={handleClickDeploy}
-                  size={Size.small}
-                  text={"Deploy"}
-                />
+                <TooltipComponent
+                  content={createMessage(DEPLOY_BUTTON_TOOLTIP)}
+                  position={Position.BOTTOM_RIGHT}
+                >
+                  <StyledDeployButton
+                    className="t--application-publish-btn"
+                    isLoading={isPublishing}
+                    onClick={handleClickDeploy}
+                    size={Size.small}
+                    text={"Deploy"}
+                  />
+                </TooltipComponent>
               </OnboardingIndicator>
 
               <DeployLinkButtonDialog
@@ -372,6 +425,8 @@ const mapStateToProps = (state: AppState) => ({
   isPublishing: getIsPublishingApplication(state),
   pageId: getCurrentPageId(state),
   inOnboarding: getIsInOnboarding(state),
+  sharedUserList: getAllUsers(state),
+  currentUser: getCurrentUser(state),
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
