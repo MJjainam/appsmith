@@ -21,6 +21,7 @@ import { bootIntercom } from "utils/helpers";
 import TooltipComponent from "components/ads/Tooltip";
 import { Position } from "@blueprintjs/core";
 import { createMessage, HELP_RESOURCE_TOOLTIP } from "constants/messages";
+import { TOOLTIP_HOVER_ON_DELAY } from "constants/AppConstants";
 
 const { algolia } = getAppsmithConfigs();
 const HelpButton = styled.button<{
@@ -142,6 +143,7 @@ class HelpModal extends React.Component<Props> {
             <TooltipComponent
               boundary="viewport"
               content={createMessage(HELP_RESOURCE_TOOLTIP)}
+              hoverOpenDelay={TOOLTIP_HOVER_ON_DELAY}
               position={Position.LEFT}
             >
               {isHelpModalOpen ? (
