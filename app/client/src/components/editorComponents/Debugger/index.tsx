@@ -17,14 +17,19 @@ import getFeatureFlags from "utils/featureFlags";
 import TooltipComponent from "components/ads/Tooltip";
 import { Position } from "@blueprintjs/core";
 import { createMessage, DEBUGGER_TOOLTIP } from "constants/messages";
+import { TOOLTIP_HOVER_ON_DELAY } from "constants/AppConstants";
+import { Classes as BpClasses } from "@blueprintjs/core";
+
+const ICON_POSITION_RIGHT = 20;
+const ICON_POSITION_BOTTOM = 20;
 
 const Container = styled.div<{ errorCount: number; warningCount: number }>`
   z-index: ${Layers.debugger};
   background-color: ${(props) =>
     props.theme.colors.debugger.floatingButton.background};
   position: absolute;
-  right: 20px;
-  bottom: 20px;
+  right: ${ICON_POSITION_RIGHT}px;
+  bottom: ${ICON_POSITION_BOTTOM}px;
   cursor: pointer;
   padding: ${(props) => props.theme.spaces[6]}px;
   color: ${(props) => props.theme.colors.debugger.floatingButton.color};
@@ -60,6 +65,14 @@ const Container = styled.div<{ errorCount: number; warningCount: number }>`
   }
 `;
 
+const StyledTooltipComponent = styled(TooltipComponent)`
+  .${BpClasses.POPOVER_TARGET} {
+    position: absolute;
+    right: ${ICON_POSITION_RIGHT}px;
+    bottom: ${ICON_POSITION_BOTTOM}px;
+  }
+`;
+
 function Debugger() {
   const dispatch = useDispatch();
   const messageCounters = useSelector(getMessageCount);
@@ -79,19 +92,26 @@ function Debugger() {
 
   if (!showDebugger && !getFeatureFlags().GIT)
     return (
-      <Container
-        className="t--debugger"
-        errorCount={messageCounters.errors}
-        onClick={onClick}
-        warningCount={messageCounters.warnings}
+      <StyledTooltipComponent
+        boundary="viewport"
+        content={createMessage(DEBUGGER_TOOLTIP)}
+        hoverOpenDelay={TOOLTIP_HOVER_ON_DELAY}
+        position={Position.TOP_RIGHT}
       >
-        <Icon name="bug" size={IconSize.XL} />
-        {!!messageCounters.errors && (
-          <div className="debugger-count t--debugger-count">
-            {totalMessageCount}
-          </div>
-        )}
-      </Container>
+        <Container
+          className="t--debugger"
+          errorCount={messageCounters.errors}
+          onClick={onClick}
+          warningCount={messageCounters.warnings}
+        >
+          <Icon name="bug" size={IconSize.XL} />
+          {!!messageCounters.errors && (
+            <div className="debugger-count t--debugger-count">
+              {totalMessageCount}
+            </div>
+          )}
+        </Container>
+      </StyledTooltipComponent>
     );
   return showDebugger ? (
     <DebuggerTabs defaultIndex={totalMessageCount ? 0 : 1} />
@@ -155,6 +175,7 @@ export function DebuggerTrigger() {
       <TooltipComponent
         boundary="viewport"
         content={createMessage(DEBUGGER_TOOLTIP)}
+        hoverOpenDelay={TOOLTIP_HOVER_ON_DELAY}
         position={Position.TOP_RIGHT}
       >
         <Icon name="bug" onClick={onClick} size={IconSize.XL} />

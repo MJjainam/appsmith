@@ -72,6 +72,7 @@ import {
 } from "constants/messages";
 import { fetchUsersForOrg } from "actions/orgActions";
 import { OrgUser } from "constants/orgConstants";
+import { TOOLTIP_HOVER_ON_DELAY } from "constants/AppConstants";
 
 const HeaderWrapper = styled(StyledHeader)`
   width: 100%;
@@ -272,6 +273,7 @@ export function EditorHeader(props: EditorHeaderProps) {
           <Link style={{ height: 24 }} to={APPLICATIONS_URL}>
             <TooltipComponent
               content={createMessage(LOGO_TOOLTIP)}
+              hoverOpenDelay={TOOLTIP_HOVER_ON_DELAY}
               position={Position.BOTTOM_LEFT}
             >
               <AppsmithLogoImg
@@ -284,6 +286,7 @@ export function EditorHeader(props: EditorHeaderProps) {
           <Boxed step={OnboardingStep.FINISH}>
             <TooltipComponent
               content={createMessage(RENAME_APPLICATION_TOOLTIP)}
+              hoverOpenDelay={TOOLTIP_HOVER_ON_DELAY}
               position={Position.BOTTOM}
             >
               <EditorAppName
@@ -348,6 +351,7 @@ export function EditorHeader(props: EditorHeaderProps) {
                         )
                       : createMessage(SHARE_BUTTON_TOOLTIP)
                   }
+                  hoverOpenDelay={TOOLTIP_HOVER_ON_DELAY}
                   position={Position.BOTTOM}
                 >
                   <Button
@@ -372,6 +376,7 @@ export function EditorHeader(props: EditorHeaderProps) {
               >
                 <TooltipComponent
                   content={createMessage(DEPLOY_BUTTON_TOOLTIP)}
+                  hoverOpenDelay={TOOLTIP_HOVER_ON_DELAY}
                   position={Position.BOTTOM_RIGHT}
                 >
                   <StyledDeployButton

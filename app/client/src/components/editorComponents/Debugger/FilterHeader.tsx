@@ -10,6 +10,7 @@ import { Classes } from "components/ads/common";
 import TooltipComponent from "components/ads/Tooltip";
 import { Position } from "@blueprintjs/core";
 import { CLEAR_LOG_TOOLTIP, createMessage } from "constants/messages";
+import { TOOLTIP_HOVER_ON_DELAY } from "constants/AppConstants";
 
 const Wrapper = styled.div`
   flex-direction: row;
@@ -62,6 +63,7 @@ function FilterHeader(props: FilterHeaderProps) {
     <Wrapper>
       <TooltipComponent
         content={createMessage(CLEAR_LOG_TOOLTIP)}
+        hoverOpenDelay={TOOLTIP_HOVER_ON_DELAY}
         position={Position.BOTTOM}
       >
         <Icon

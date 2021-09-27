@@ -22,6 +22,7 @@ import { EntityClassNames } from ".";
 import ScrollIndicator from "components/ads/ScrollIndicator";
 import TooltipComponent from "components/ads/Tooltip";
 import { COPY_ELEMENT, createMessage } from "constants/messages";
+import { TOOLTIP_HOVER_ON_DELAY } from "constants/AppConstants";
 
 const StyledValue = styled.pre<{ step: number }>`
   & {
@@ -119,8 +120,6 @@ const StyledPopoverContent = styled.div`
 `;
 
 const CopyBox = styled.div`
-  padding-top: 4px;
-  padding-bottom: 4px;
   cursor: pointer;
   position: relative;
   .${Classes.POPOVER_WRAPPER} {
@@ -149,6 +148,11 @@ const CopyBox = styled.div`
       opacity: 1;
     }
   }
+`;
+
+const StyledHighlightedCode = styled(HighlightedCode)`
+  padding-top: 4px;
+  padding-bottom: 4px;
 `;
 
 const CollapseIcon = ControlIcons.COLLAPSE_CONTROL;
@@ -228,16 +232,18 @@ export const EntityProperty = memo((props: EntityPropertyProps) => {
   return (
     <Wrapper className={`${EntityClassNames.PROPERTY}`} step={props.step}>
       <CopyBox>
-        <HighlightedCode
+        <StyledHighlightedCode
           className="binding"
           codeText={codeText}
           language={SYNTAX_HIGHLIGHTING_SUPPORTED_LANGUAGES.APPSMITH}
+          onClick={copyBindingToClipboard}
           ref={propertyRef}
           skin={Skin.DARK}
         />
         <TooltipComponent
           boundary="viewport"
           content={createMessage(COPY_ELEMENT)}
+          hoverOpenDelay={TOOLTIP_HOVER_ON_DELAY}
           position={Position.RIGHT}
         >
           <Icon
