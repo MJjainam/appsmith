@@ -3,6 +3,7 @@ import { updateApplicationLayout } from "actions/applicationActions";
 import Dropdown from "components/ads/Dropdown";
 import Icon, { IconName, IconSize } from "components/ads/Icon";
 import TooltipComponent from "components/ads/Tooltip";
+import { TOOLTIP_HOVER_ON_DELAY } from "constants/AppConstants";
 import { Colors } from "constants/Colors";
 import { createMessage, LAYOUT_DROPDOWN_TOOLTIP } from "constants/messages";
 import React from "react";
@@ -110,6 +111,7 @@ export function MainContainerLayoutControl() {
               <TooltipComponent
                 boundary="viewport"
                 content={createMessage(LAYOUT_DROPDOWN_TOOLTIP)}
+                hoverOpenDelay={TOOLTIP_HOVER_ON_DELAY}
                 position={Position.BOTTOM}
               >
                 <Icon

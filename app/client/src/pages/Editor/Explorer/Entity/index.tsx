@@ -20,6 +20,7 @@ import { useDispatch } from "react-redux";
 import useClick from "utils/hooks/useClick";
 import { ReduxActionTypes } from "constants/ReduxActionConstants";
 import TooltipComponent from "components/ads/Tooltip";
+import { TOOLTIP_HOVER_ON_DELAY } from "constants/AppConstants";
 
 export enum EntityClassNames {
   CONTEXT_MENU = "entity-context-menu",
@@ -251,6 +252,7 @@ export const Entity = forwardRef(
             <TooltipComponent
               boundary="viewport"
               content={props.addButtonHelptext}
+              hoverOpenDelay={TOOLTIP_HOVER_ON_DELAY}
               position={Position.RIGHT}
             >
               <AddButton

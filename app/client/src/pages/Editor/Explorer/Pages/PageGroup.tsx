@@ -22,6 +22,7 @@ import {
 } from "constants/messages";
 import TooltipComponent from "components/ads/Tooltip";
 import { Position } from "@blueprintjs/core";
+import { TOOLTIP_HOVER_ON_DELAY } from "constants/AppConstants";
 
 type ExplorerPageGroupProps = {
   searchKeyword?: string;
@@ -51,6 +52,7 @@ const settingsIconWithTooltip = (
   <TooltipComponent
     boundary="viewport"
     content={createMessage(PAGE_PROPERTIES_TOOLTIP)}
+    hoverOpenDelay={TOOLTIP_HOVER_ON_DELAY}
     position={Position.BOTTOM}
   >
     {settingsIcon}

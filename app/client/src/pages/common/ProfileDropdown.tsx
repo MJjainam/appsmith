@@ -17,6 +17,7 @@ import { PROFILE } from "constants/routes";
 import UserApi from "api/UserApi";
 import TooltipComponent from "components/ads/Tooltip";
 import { ACCOUNT_TOOLTIP, createMessage } from "constants/messages";
+import { TOOLTIP_HOVER_ON_DELAY } from "constants/AppConstants";
 type TagProps = CommonComponentProps & {
   onClick?: (text: string) => void;
   userName?: string;
@@ -79,6 +80,7 @@ export default function ProfileDropdown(props: TagProps) {
   const Profile = (
     <TooltipComponent
       content={createMessage(ACCOUNT_TOOLTIP)}
+      hoverOpenDelay={TOOLTIP_HOVER_ON_DELAY}
       position={Position.BOTTOM_RIGHT}
     >
       <ProfileImage
