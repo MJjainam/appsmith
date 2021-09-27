@@ -14,10 +14,8 @@ import { bootIntercom } from "utils/helpers";
 import TooltipComponent from "components/ads/Tooltip";
 import { createMessage, HELP_RESOURCE_TOOLTIP } from "constants/messages";
 import { TOOLTIP_HOVER_ON_DELAY } from "constants/AppConstants";
-import log from "loglevel";
 import { useCallback } from "react";
 import { useState } from "react";
-import { boolean } from "@storybook/addon-knobs";
 
 const HelpPopoverStyle = createGlobalStyle`
   .bp3-popover.bp3-minimal.navbar-help-popover {

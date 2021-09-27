@@ -143,6 +143,7 @@ class HelpModal extends React.Component<Props> {
             <TooltipComponent
               boundary="viewport"
               content={createMessage(HELP_RESOURCE_TOOLTIP)}
+              disabled={isHelpModalOpen}
               hoverOpenDelay={TOOLTIP_HOVER_ON_DELAY}
               position={Position.LEFT}
             >
