@@ -824,8 +824,14 @@ function ApplicationsSection(props: any) {
                       {userRoles.slice(0, 5).map((el: UserRoles) => (
                         <TooltipComponent
                           content={
-                            el.username +
-                            (currentUser?.email === el.username ? " (you)" : "")
+                            <span>
+                              {el.username}&nbsp;
+                              {currentUser?.email === el.username ? (
+                                <strong>(You)</strong>
+                              ) : (
+                                ""
+                              )}
+                            </span>
                           }
                           hoverOpenDelay={TOOLTIP_HOVER_ON_DELAY}
                           key={el.username}
