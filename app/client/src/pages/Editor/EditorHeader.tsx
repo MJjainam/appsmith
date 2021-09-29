@@ -284,6 +284,7 @@ export function EditorHeader(props: EditorHeaderProps) {
           </Link>
           <Boxed step={OnboardingStep.FINISH}>
             <TooltipComponent
+              autoFocus={false}
               content={createMessage(RENAME_APPLICATION_TOOLTIP)}
               disabled={isPopoverOpen}
               hoverOpenDelay={TOOLTIP_HOVER_ON_DELAY}
