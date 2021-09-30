@@ -288,6 +288,7 @@ export function EditorHeader(props: EditorHeaderProps) {
               content={createMessage(RENAME_APPLICATION_TOOLTIP)}
               disabled={isPopoverOpen}
               hoverOpenDelay={TOOLTIP_HOVER_ON_DELAY}
+              openOnTargetFocus={false}
               position={Position.BOTTOM}
             >
               <EditorAppName
